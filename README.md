@@ -166,3 +166,47 @@ See `AI_DISCLOSURE.md` for a complete statement.
 ## Team
 
 StateLens — DataForge 2026, Pathway Track.
+
+---
+
+## Deploying (bug 16 — required for submission)
+
+The app needs a public URL that opens without sign-in. Two zero-config options:
+
+### Option A — Vercel (recommended, 2 minutes)
+
+1. Go to [vercel.com/new](https://vercel.com/new)
+2. Import `github.com/yogeshroyal63-beep/Dataforge`
+3. Framework preset: **Vite** (auto-detected)
+4. Add environment variables (Settings → Environment Variables):
+   ```
+   VITE_FIREBASE_API_KEY
+   VITE_FIREBASE_AUTH_DOMAIN
+   VITE_FIREBASE_PROJECT_ID
+   VITE_FIREBASE_STORAGE_BUCKET
+   VITE_FIREBASE_MESSAGING_SENDER_ID
+   VITE_FIREBASE_APP_ID
+   ```
+   **If you skip these the app still works** — the public experiment, BDH-CQ, Limitation, and Sources pages all function without Firebase. Only the Researcher Workspace (Dashboard) requires it.
+5. Click **Deploy**. Vercel assigns a `*.vercel.app` URL immediately.
+6. Add that URL to this README under "Live URL" and to the submission form.
+
+### Option B — Netlify (also zero-config)
+
+1. Go to [app.netlify.com/start](https://app.netlify.com/start)
+2. Connect `yogeshroyal63-beep/Dataforge`
+3. Build command: `npm run build` | Publish directory: `dist`
+4. Same env vars as above (optional for core functionality)
+5. Click **Deploy site**
+
+Both `vercel.json` (rewrites + cache headers) and `netlify.toml` (build config + redirects + cache headers) are already committed. No additional config needed.
+
+---
+
+## Live URL
+
+> **TODO:** Replace this line with the deployed URL after completing the steps above, then push the update.
+>
+> Example: `https://statelens.vercel.app`
+
+The submission form requires a public artifact URL that opens without sign-in.
