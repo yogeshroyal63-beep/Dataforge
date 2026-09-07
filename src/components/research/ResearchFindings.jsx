@@ -92,14 +92,14 @@ export const ResearchFindings = () => {
             <div className="p-2.5 rounded bg-lab-bg border border-lab-border space-y-1">
               <span className="text-[10px] text-lab-text-muted uppercase block">Model Scale</span>
               <span className="text-sm font-bold text-lab-text-primary block">
-                0 Parameters
+                0 Parameters (untrained)
               </span>
             </div>
 
             <div className="p-2.5 rounded bg-lab-bg border border-lab-border space-y-1">
-              <span className="text-[10px] text-lab-text-muted uppercase block">Linear Attention</span>
+              <span className="text-[10px] text-lab-text-muted uppercase block">Linear Attn (mean, N=2-20)</span>
               <span className="text-sm font-bold text-lab-accent block">
-                26.4% Recall
+                ~50.8% Recall
               </span>
             </div>
 
@@ -113,10 +113,14 @@ export const ResearchFindings = () => {
             <div className="p-2.5 rounded bg-lab-bg border border-lab-border space-y-1">
               <span className="text-[10px] text-lab-text-muted uppercase block">Core Mechanism</span>
               <span className="text-xs font-semibold text-lab-text-secondary block">
-                8×10 State Matrix
+                16×10 State Matrix
               </span>
             </div>
           </div>
+
+          <p className="text-[10px] text-lab-text-muted leading-relaxed">
+            Computed live by this app&rsquo;s own benchmark (5 seeds averaged per condition) &mdash; see the Experiment page to reproduce.
+          </p>
 
           <div className="p-2.5 rounded bg-lab-bg/80 border border-lab-accent/30 text-[10px] text-lab-accent">
             <strong>Attribution:</strong> {TOY_EXPERIMENT_DATA.attribution}

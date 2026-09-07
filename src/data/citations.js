@@ -41,7 +41,7 @@ export const CITATIONS = {
   wright2025bdh: {
     id: 'wright2025bdh',
     authors:
-      'Pathway Research (Chorowski, J., Stamirowska, Z., Uznański, P., et al.)',
+      'Kosowski, A., Uznański, P., Chorowski, J., Stamirowska, Z., & Bartoszkiewicz, M.',
     year: 2025,
     title:
       'The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain',

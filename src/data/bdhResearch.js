@@ -9,6 +9,8 @@
  * src/models/.
  */
 
+import { CITATIONS } from './citations.js'
+
 export const BDH_STAGES = [
   {
     id: 'neurons',
@@ -116,5 +118,190 @@ export const POST_TRANSFORMER_LANDSCAPE = [
     family: 'Brain-inspired post-Transformer',
     memory: 'Distributed across sparse, Hebbian synaptic state',
     tradeoff: 'Interpretable, sparse, biologically grounded; BDH-CQ additionally supports in-context adaptation via recurrent latent reasoning without weight updates.',
+  },
+]
+
+/**
+ * BDH_ARCHITECTURE_STAGES
+ *
+ * The 5 stages rendered by BDHArchitectureDiagram.jsx. Each stage traces to
+ * a specific mechanism named in the Dragon Hatchling paper (wright2025bdh),
+ * cited inline so the "which equation/diagram" question always has a
+ * concrete answer during a live defense, not just a general reference to
+ * "the BDH paper."
+ */
+export const BDH_ARCHITECTURE_STAGES = [
+  {
+    id: 'graph-substrate',
+    shortTitle: 'Neuron-Synapse Graph',
+    label: 'Stage 1 — Local Graph Substrate',
+    summary:
+      'BDH is defined as n locally-interacting neuron particles on a scale-free graph, not as a stack of matrix layers.',
+    details:
+      "The Dragon Hatchling paper's 'equations of reasoning' (Section 2) define BDH as a local edge-reweighting process: each neuron only reads its graph neighbors, so there is no global attention matrix to compute at this stage. This is the structural precondition every later stage builds on.",
+  },
+  {
+    id: 'hebbian-write',
+    shortTitle: 'Hebbian Write',
+    label: 'Stage 2 — Hebbian Synaptic Update',
+    summary:
+      'Connections between co-active neurons strengthen as the model reads -- working memory is a write to synaptic weight, not to a separate cache.',
+    details:
+      "The paper frames this as modus-ponens-style inference fused with Hebbian learning: a belief in fact i contributes to a belief in fact j in proportion to the connection strength between them, and that strength is itself updated by co-activation while reading. This is the same 'update in place, no growing list' shape that StateLens' S_t = S_{t-1} + phi(k_t)v_t^T recurrence demonstrates in Part A, at a much smaller scale.",
+  },
+  {
+    id: 'sparse-activation',
+    shortTitle: 'Sparse Synaptic State',
+    label: 'Stage 3 — Sparse, Non-Negative Activations',
+    summary:
+      'Only a small, input-dependent fraction of neurons are active at any moment, and activity is always non-negative.',
+    details:
+      'In reported BDH runs, roughly 5% of neurons are active at a given step -- this is not a fixed sparsity budget enforced by a top-k rule, but an emergent property that varies with how predictable the current input is. Because the synaptic state carries the memory (Stage 2), this sparsity keeps that memory sparse and interpretable rather than dense and opaque.',
+  },
+  {
+    id: 'monosemantic',
+    shortTitle: 'Monosemantic Synapses',
+    label: 'Stage 4 — Monosemantic Synapses',
+    summary:
+      'Individual synapses are reported to respond to one recognizable concept, rather than mixing many unrelated ideas into the same connection.',
+    details:
+      'This is the interpretability payoff of Stages 1-3: because memory lives in sparse, locally-updated synaptic weights rather than a dense matrix mixed by softmax, individual connections can be inspected and are reported to encode identifiable semantic concepts, not just abstract token statistics.',
+  },
+  {
+    id: 'gpu-linear-attention',
+    shortTitle: 'BDH-GPU Formulation',
+    label: 'Stage 5 — GPU-Friendly Reformulation (BDH-GPU)',
+    summary:
+      'BDH also admits a GPU-friendly formulation, built from ReLU-low-rank transformations with linear attention -- distinct from an SSM in the Mamba sense.',
+    details:
+      "This is the stage that connects back to StateLens' Part A most directly: BDH-GPU's linear-attention view is a concrete instance of the same fixed-state-instead-of-growing-cache trade-off the toy recall experiment demonstrates. The brief is explicit that BDH should not be classified as a Mamba-style SSM; BDH-GPU is a separate, purpose-built reformulation for hardware efficiency.",
+  },
+]
+
+/**
+ * TOY_VS_RESEARCH_SLIDER_STEPS
+ *
+ * The 4 steps rendered by ResearchBridge.jsx. Numbers for "StateLens Toy"
+ * and "Linear Attn" are the actual constants/measurements this app computes
+ * (see toyEncoding.js, benchmark.js) -- not invented figures. "BDH Synaptic"
+ * and "BDH-CQ Latent" figures are Pathway's own published numbers, cited via
+ * bdh / bdhcq entries in CITATIONS and never presented as StateLens output.
+ */
+export const TOY_VS_RESEARCH_SLIDER_STEPS = [
+  {
+    title: 'StateLens Toy Recall Task',
+    purpose: 'Educational substrate',
+    stateSize: 'S ∈ ℝ^(16×10), fixed regardless of N',
+    featureSpace: 'phi(x) = ELU(12·x) + 1, 16-dim random keys',
+    valueSpace: '9 fixed one-hot-style directions (integers 1-9)',
+    reasoning: 'Single linear readout: y = phi(q)ᵀS / phi(q)ᵀz',
+  },
+  {
+    title: 'Linear Attention (Katharopoulos et al., 2020)',
+    purpose: 'Foundational mechanism',
+    stateSize: 'S_t ∈ ℝ^(d_k×d_v), fixed-size recurrent state',
+    featureSpace: 'Learned positive feature map phi(x), trained end-to-end',
+    valueSpace: 'Dense value vectors from a trained embedding table',
+    reasoning: 'Same additive recurrence StateLens implements, at production scale',
+  },
+  {
+    title: 'BDH Synaptic Memory',
+    purpose: 'Brain-inspired reformulation',
+    stateSize: 'Sparse, scale-free synaptic graph (n neuron particles)',
+    featureSpace: 'Sparse, non-negative activations (~5% active per step)',
+    valueSpace: 'Monosemantic synapses -- one concept per connection (reported)',
+    reasoning: 'Hebbian edge-reweighting: local, no global attention matrix',
+  },
+  {
+    title: 'BDH-CQ Recurrent Latent Reasoning',
+    purpose: 'In-context adaptation at inference',
+    stateSize: 'High-dimensional latent workspace, updated per demonstration',
+    featureSpace: 'Trained 150M-parameter configuration (published)',
+    valueSpace: 'ARC-AGI-1 grids, decoded only at the final latent step',
+    reasoning: 'Iterative latent computation, no verbalized chain-of-thought',
+  },
+]
+
+/**
+ * RESEARCH_FINDINGS_DATA / TOY_EXPERIMENT_DATA
+ *
+ * Rendered side-by-side by ResearchFindings.jsx specifically to prevent
+ * toy-vs-published-number confusion. TOY_EXPERIMENT_DATA's accuracy figures
+ * are computed by this repo's own benchmark.js (runFullBenchmark, seeds
+ * 1-5, N=2..20) -- see README "Verifying the core claim yourself" for how
+ * to reproduce them. RESEARCH_FINDINGS_DATA figures are Pathway's own
+ * published numbers and are never generated by this app.
+ */
+export const RESEARCH_FINDINGS_DATA = {
+  modelName: 'BDH-CQ (Pathway Research)',
+  parameterCount: '150M parameters',
+  reportedScore: '29.5% pass@2 (ARC-AGI-1)',
+  reportedCost: '$0.0007 / task',
+  attribution:
+    'Engdahl, Kosowski, Chorowski, Stamirowska, Uznański, Jiang, Phadke, Kinas & Zhong (2026), "BDH-CQ: In-Context Learning with Recurrent Latent Reasoning," arXiv:2608.09888. Published by Pathway Research -- never reproduced or re-measured by StateLens.',
+}
+
+export const TOY_EXPERIMENT_DATA = {
+  modelName: 'StateLens Toy Recall Benchmark',
+  attribution:
+    'Computed live, client-side, by this repo\u0027s own src/models/benchmark.js -- runFullBenchmark() across N=2..20 facts, 5 seeds per condition. Reproducible by running npm run build or inspecting the source directly. Not a published research result and not comparable in scale to BDH-CQ\u0027s figures.',
+}
+
+/**
+ * PRIMARY_SOURCES
+ *
+ * Rendered by ResearchSources.jsx as the "Primary Research Literature"
+ * panel on the /bdh-cq page. Built directly from CITATIONS in citations.js
+ * so this list can never drift out of sync with the sourcing already
+ * verified there -- one edit to citations.js updates both places.
+ */
+export const PRIMARY_SOURCES = [
+  {
+    id: CITATIONS.wright2025bdh.id,
+    organization: 'Pathway Research',
+    date: String(CITATIONS.wright2025bdh.year),
+    title: CITATIONS.wright2025bdh.title,
+    description: CITATIONS.wright2025bdh.role,
+    url: CITATIONS.wright2025bdh.url,
+  },
+  {
+    id: CITATIONS.engdahl2026bdhcq.id,
+    organization: 'Pathway Research',
+    date: String(CITATIONS.engdahl2026bdhcq.year),
+    title: CITATIONS.engdahl2026bdhcq.title,
+    description: CITATIONS.engdahl2026bdhcq.role,
+    url: CITATIONS.engdahl2026bdhcq.url,
+  },
+  {
+    id: CITATIONS.katharopoulos2020.id,
+    organization: `${CITATIONS.katharopoulos2020.venue}`,
+    date: String(CITATIONS.katharopoulos2020.year),
+    title: CITATIONS.katharopoulos2020.title,
+    description: CITATIONS.katharopoulos2020.role,
+    url: CITATIONS.katharopoulos2020.url,
+  },
+  {
+    id: CITATIONS.yang2023gla.id,
+    organization: 'arXiv',
+    date: String(CITATIONS.yang2023gla.year),
+    title: CITATIONS.yang2023gla.title,
+    description: CITATIONS.yang2023gla.role,
+    url: CITATIONS.yang2023gla.url,
+  },
+  {
+    id: CITATIONS.sun2023retnet.id,
+    organization: 'arXiv',
+    date: String(CITATIONS.sun2023retnet.year),
+    title: CITATIONS.sun2023retnet.title,
+    description: CITATIONS.sun2023retnet.role,
+    url: CITATIONS.sun2023retnet.url,
+  },
+  {
+    id: CITATIONS.vaswani2017.id,
+    organization: CITATIONS.vaswani2017.venue,
+    date: String(CITATIONS.vaswani2017.year),
+    title: CITATIONS.vaswani2017.title,
+    description: CITATIONS.vaswani2017.role,
+    url: CITATIONS.vaswani2017.url,
   },
 ]

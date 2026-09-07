@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 /**
  * Firebase is used only for lightweight account identity (email/password),
@@ -22,10 +23,16 @@ const hasFirebaseConfig = Boolean(firebaseConfig.apiKey && firebaseConfig.projec
 
 let app = null
 let auth = null
+let db = null
 
 if (hasFirebaseConfig) {
   app = initializeApp(firebaseConfig)
   auth = getAuth(app)
+  db = getFirestore(app)
 }
 
-export { app, auth, hasFirebaseConfig }
+// isFirebaseConfigured is the name services/experimentStorage.js imports;
+// hasFirebaseConfig is kept too since other call sites already use it.
+const isFirebaseConfigured = hasFirebaseConfig
+
+export { app, auth, db, hasFirebaseConfig, isFirebaseConfigured }
