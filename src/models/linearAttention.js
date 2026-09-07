@@ -141,3 +141,13 @@ export const LINEAR_ATTENTION_META = {
   description:
     'Compresses every fact seen so far into one fixed-size running state, updated additively. Nothing is stored individually -- only the accumulated sum.',
 }
+
+/**
+ * Adapter used by experimentEngine.js: wraps linearAttentionRecall so callers
+ * can pass (facts, queryFact) where queryFact has a .keyVector property.
+ */
+export async function runLinearAttention(facts, queryFact) {
+  const qVec = queryFact.keyVector
+  if (!qVec) throw new Error('queryFact must have a keyVector property')
+  return linearAttentionRecall(facts, qVec)
+}

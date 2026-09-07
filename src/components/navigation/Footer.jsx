@@ -11,20 +11,20 @@ export default function Footer() {
             research artifact, not an official Pathway product.
           </p>
         </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
-          <Link to="/experiment" className="hover:text-ink">Experiment</Link>
-          <Link to="/bdh-cq" className="hover:text-ink">BDH-CQ</Link>
-          <Link to="/limitations" className="hover:text-ink">Limitations</Link>
-          <Link to="/sources" className="hover:text-ink">Sources</Link>
+        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft" aria-label="Footer navigation">
+          <Link to="/experiment" className="hover:text-ink focus-visible:underline">Experiment</Link>
+          <Link to="/bdh-cq"    className="hover:text-ink focus-visible:underline">BDH-CQ</Link>
+          <Link to="/limitation" className="hover:text-ink focus-visible:underline">Limitation</Link>
+          <Link to="/sources"   className="hover:text-ink focus-visible:underline">Sources</Link>
           <a
-            href="https://github.com/SowmispAd/DataForge"
+            href="https://github.com/yogeshroyal63-beep/Dataforge"
             target="_blank"
             rel="noreferrer"
-            className="hover:text-ink"
+            className="hover:text-ink focus-visible:underline"
           >
-            Source code
+            Source code<span className="sr-only"> (opens in new tab)</span>
           </a>
-        </div>
+        </nav>
       </div>
     </footer>
   )

@@ -93,3 +93,36 @@ export function summarizeBenchmark(results) {
     crossoverN: crossoverPoint ? crossoverPoint.n : null,
   }
 }
+
+/**
+ * Adapter for ExperimentContext: runs the full benchmark with progress callbacks.
+ * Wraps runFullBenchmark in an async function that accepts an optional onProgress
+ * callback, mirroring the API ExperimentContext.jsx expects.
+ */
+export async function runAccuracyBenchmark(onProgress) {
+  const seeds = [1, 2, 3, 4, 5]
+  const lengths = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+  const allResults = []
+
+  for (let i = 0; i < lengths.length; i++) {
+    const n = lengths[i]
+    onProgress?.(`Running N = ${n}…`)
+    // yield to event loop between conditions so UI stays responsive
+    await new Promise((r) => setTimeout(r, 0))
+    const runs = seeds.map((s) => runConditionAccuracy(n, s))
+    const avg = (key) => runs.reduce((sum, r) => sum + r[key], 0) / runs.length
+    allResults.push({
+      n,
+      fullAccuracy: avg('fullAccuracy'),
+      linearAccuracy: avg('linearAccuracy'),
+      fullMemoryCells: runs[0].fullMemoryCells,
+      linearMemoryCells: runs[0].linearMemoryCells,
+    })
+  }
+
+  onProgress?.('Done.')
+  return {
+    results: allResults,
+    summary: summarizeBenchmark(allResults),
+  }
+}

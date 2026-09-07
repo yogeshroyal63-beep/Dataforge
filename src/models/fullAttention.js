@@ -77,3 +77,13 @@ export const FULL_ATTENTION_META = {
   description:
     'Compares the query against every stored key and mixes every stored value, weighted by similarity. Nothing is ever discarded.',
 }
+
+/**
+ * Adapter used by experimentEngine.js: wraps fullAttentionRecall so callers
+ * can pass (facts, queryFact) where queryFact has a .keyVector property.
+ */
+export async function runFullAttention(facts, queryFact) {
+  const qVec = queryFact.keyVector
+  if (!qVec) throw new Error('queryFact must have a keyVector property')
+  return fullAttentionRecall(facts, qVec)
+}
