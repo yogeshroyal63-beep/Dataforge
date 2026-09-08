@@ -31,7 +31,7 @@ export const BDHCQ = () => {
             Pathway Research Module
           </span>
           <Badge variant="research" size="sm" dot>
-            Phase 6 — Research & Technical Deep-Dive
+            Research & Technical Deep-Dive
           </Badge>
           <Badge variant="accent" size="sm">
             BDH / BDH-CQ
